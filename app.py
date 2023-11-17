@@ -1,9 +1,7 @@
 from flask import Flask, request, render_template
 import pickle
-from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-scaler = StandardScaler()
 model = pickle.load(open("attrition_rate.pkl", 'rb'))
 
 app = Flask(__name__)
