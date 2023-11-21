@@ -1,16 +1,14 @@
-# save this as app.py
 from flask import Flask, request, render_template
 import pickle
-from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-scaler = StandardScaler()
 model = pickle.load(open("attrition_rate.pkl", 'rb'))
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    prediction = ""
     if request.method == "POST":
         Age = int(request.form['Age'])
         BusinessTravel = request.form['BusinessTravel']
@@ -176,17 +174,19 @@ def home():
 
         input_features = np.array([Age, BusinessTravel, DailyRate, Department, DistanceFromHome, Education, EducationField, EnvironmentSatisfaction, Gender, HourlyRate, JobInvolvement, JobLevel, JobRole, JobSatisfaction, MaritalStatus, MonthlyIncome, MonthlyRate, NumCompaniesWorked, OverTime, PercentSalaryHike, PerformanceRating, RelationshipSatisfaction, StockOptionLevel, TotalWorkingYears, TrainingTimesLastYear, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole, YearsSinceLastPromotion, YearsWithCurrManager])
 
+
         prediction = model.predict([input_features])[0]
 
         if prediction == 0:
-            prediction = "It seems that the employee will stick to the company."
+            prediction = "Based on the provided information, it appears that the employee is likely to remain with the company."
         else:
-            prediction = "There is a high chance that the employee will flee from the company."
+            prediction = "Based on the provided information, there is a high probability that the employee may consider leaving the company."
 
-        return render_template("index.html", **locals())
+
+        return render_template("index.html", prediction=prediction )
 
     else:
-        return render_template("index.html", **locals())
+        return render_template("index.html", prediction=prediction)
 
 
 if __name__ == "__main__":
